@@ -1,7 +1,7 @@
 {
   "name": "redux-example",
   "version": "1.0.0",
-  "description": "React-redux coupon 생성 예제",
+  "description": "React-redux exchange calculator",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
