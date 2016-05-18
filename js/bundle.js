@@ -19651,16 +19651,13 @@ var Exchange = function (_Component) {
 					method: 'GET',
 					url: '' + _this2.state.url + _this2.state.date,
 					data: { base: _this2.state.currentCountry.from, symbols: _this2.state.symbols },
-					type: 'JSON',
+					dataType: 'jsonp',
+					jsonpCallback: 'callback',
 					complete: function complete(result) {
 						if (result.status == 200) {
-							resolve(JSON.parse(result.responseText));
-						} else if (result.status == 403) {
-							reject(result.responseText);
-						} else if (result.status == 404) {
-							reject(result.responseText);
-						} else if (result.status == 500) {
-							reject(result.responseText);
+							resolve(result.responseJSON);
+						} else if (result.status == 403 || result.status == 404 || result.status == 500) {
+							reject(result.status + result.statusText);
 						}
 					}
 				});

@@ -34,16 +34,13 @@ export default class Exchange extends Component {
 				method:'GET',
 				url:`${this.state.url}${this.state.date}`,
 				data:{base:this.state.currentCountry.from, symbols:this.state.symbols},
-				type:'JSON',
+				dataType:'jsonp',
+				jsonpCallback:'callback',
 				complete:function(result){
 					if(result.status == 200){
-						resolve( JSON.parse(result.responseText));
-					}else if(result.status == 403){
-						reject(result.responseText);
-					}else if(result.status == 404){
-						reject(result.responseText);
-					}else if(result.status == 500){
-						reject(result.responseText);
+						resolve(result.responseJSON);
+					}else if(result.status == 403 || result.status == 404 || result.status == 500 ){
+						reject(result.status + result.statusText);
 					}
 				}
 			});
