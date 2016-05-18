@@ -19620,7 +19620,7 @@ var Exchange = function (_Component) {
 		var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Exchange).call(this));
 
 		_this.state = {
-			url: 'http://api.fixer.io/',
+			url: 'https://api.fixer.io/',
 			symbols: 'KRW,USD,EUR,JPY,CNY,AUD,CAD,NZD,CZK',
 			date: _this._date(),
 			rates: new Map(),

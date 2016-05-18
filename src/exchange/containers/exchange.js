@@ -9,7 +9,7 @@ export default class Exchange extends Component {
 		super();
 
 		this.state = {
-			url:'http://api.fixer.io/',
+			url:'https://api.fixer.io/',
 			symbols:'KRW,USD,EUR,JPY,CNY,AUD,CAD,NZD,CZK',
 			date:this._date(),
 			rates:new Map(),
