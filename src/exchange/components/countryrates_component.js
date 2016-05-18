@@ -13,7 +13,8 @@ export default class CountryRates extends Component {
 			'CNY':'중국',
 			'AUD':'호주',
 			'CAD':'캐나다',
-			'NZD':'뉴질랜드'
+			'NZD':'뉴질랜드',
+			'CZK':'체코'
 		}
 	}
 

@@ -19332,7 +19332,8 @@ var CountryRates = function (_Component) {
 			'CNY': '중국',
 			'AUD': '호주',
 			'CAD': '캐나다',
-			'NZD': '뉴질랜드'
+			'NZD': '뉴질랜드',
+			'CZK': '체코'
 		};
 		return _this;
 	}
@@ -19486,7 +19487,8 @@ var SelectComponent = function (_Component) {
 			'CNY': '중국',
 			'AUD': '호주',
 			'CAD': '캐나다',
-			'NZD': '뉴질랜드'
+			'NZD': '뉴질랜드',
+			'CZK': '체코'
 		};
 
 		_this.currency = {
@@ -19497,7 +19499,8 @@ var SelectComponent = function (_Component) {
 			'CNY': '위안',
 			'AUD': '달러',
 			'CAD': '달러',
-			'NZD': '달러'
+			'NZD': '달러',
+			'CZK': '코루나'
 		};
 		return _this;
 	}
@@ -19617,9 +19620,9 @@ var Exchange = function (_Component) {
 		var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Exchange).call(this));
 
 		_this.state = {
-			url: '/js/dummy.js',
-			symbols: 'KRW,USD,EUR,JPY,CNY,AUD,CAD,NZD',
-			date: '2016-05-11',
+			url: 'http://api.fixer.io/',
+			symbols: 'KRW,USD,EUR,JPY,CNY,AUD,CAD,NZD,CZK',
+			date: _this._date(),
 			rates: new Map(),
 			unit: ['none'],
 			currentCountry: { to: 'USD', from: 'KRW' },
@@ -19629,6 +19632,16 @@ var Exchange = function (_Component) {
 	}
 
 	_createClass(Exchange, [{
+		key: '_date',
+		value: function _date() {
+			var date = new Date();
+			var yyyy = date.getFullYear().toString();
+			var mm = (date.getMonth() + 1).toString();
+			var dd = date.getDate().toString();
+
+			return yyyy + '-' + (mm[1] ? mm : "0" + mm[0]) + '-' + (dd[1] ? dd : "0" + dd[0]);
+		}
+	}, {
 		key: '_promise',
 		value: function _promise() {
 			var _this2 = this;
@@ -19636,8 +19649,8 @@ var Exchange = function (_Component) {
 			return new Promise(function (resolve, reject) {
 				$.ajax({
 					method: 'GET',
-					url: _this2.state.url,
-					data: { base: _this2.state.currentCountry.to, symbols: _this2.state.symbols },
+					url: '' + _this2.state.url + _this2.state.date,
+					data: { base: _this2.state.currentCountry.from, symbols: _this2.state.symbols },
 					type: 'JSON',
 					complete: function complete(result) {
 						if (result.status == 200) {

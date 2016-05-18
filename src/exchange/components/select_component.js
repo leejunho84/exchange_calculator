@@ -13,7 +13,8 @@ export default class SelectComponent extends Component {
 			'CNY':'중국',
 			'AUD':'호주',
 			'CAD':'캐나다',
-			'NZD':'뉴질랜드'
+			'NZD':'뉴질랜드',
+			'CZK':'체코'
 		}
 
 		this.currency = {
@@ -24,7 +25,8 @@ export default class SelectComponent extends Component {
 			'CNY':'위안',
 			'AUD':'달러',
 			'CAD':'달러',
-			'NZD':'달러'
+			'NZD':'달러',
+			'CZK':'코루나'
 		}
 	}
 

@@ -9,9 +9,9 @@ export default class Exchange extends Component {
 		super();
 
 		this.state = {
-			url:'/js/dummy.js',
-			symbols:'KRW,USD,EUR,JPY,CNY,AUD,CAD,NZD',
-			date:'2016-05-11',
+			url:'http://api.fixer.io/',
+			symbols:'KRW,USD,EUR,JPY,CNY,AUD,CAD,NZD,CZK',
+			date:this._date(),
 			rates:new Map(),
 			unit:['none'],
 			currentCountry:{to:'USD', from:'KRW'},
@@ -19,12 +19,21 @@ export default class Exchange extends Component {
 		}
 	}
 
+	_date(){
+		var date = new Date();
+		var yyyy = date.getFullYear().toString();
+		var mm = (date.getMonth()+1).toString();
+		var dd = date.getDate().toString();
+
+		return yyyy+'-'+(mm[1]?mm:"0"+mm[0])+'-'+(dd[1]?dd:"0"+dd[0]);
+	}
+
 	_promise(){
 		return new Promise((resolve, reject) => {
 			$.ajax({
 				method:'GET',
-				url:this.state.url,
-				data:{base:this.state.currentCountry.to, symbols:this.state.symbols},
+				url:`${this.state.url}${this.state.date}`,
+				data:{base:this.state.currentCountry.from, symbols:this.state.symbols},
 				type:'JSON',
 				complete:function(result){
 					if(result.status == 200){

@@ -153,6 +153,7 @@ table {
 .countryflag.AUD {background-position:0 -128px;}
 .countryflag.NZD {background-position: -120px -256px;}
 .countryflag.CAD {background-position:0 -192px;}
+.countryflag.CZK {background-position:-120px -192px;}
 .hideTxt {visibility:hidden; overflow:hidden; position:absolute !important; left:-999px; width:0; height:0; font-size:0; line-height:0;}
 
 
