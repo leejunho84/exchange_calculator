@@ -28,8 +28,14 @@ export default class SelectComponent extends Component {
 		}
 	}
 
-	_onInputChange(e){
-		this.props.exchange(this.refs.inputNumber.value, this.props.selectType);
+	_replacePrice(val){
+		let price = val.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+		return price;
+	}
+
+	_onInputChange(){
+		let val = this.refs.inputNumber.value.replace(/,/g, '');
+		this.props.exchange(val, this.props.selectType);
 	}
 
 	_onSelectChange(e){
@@ -53,8 +59,8 @@ export default class SelectComponent extends Component {
 					<span className="unit">{currentCountry}</span>
 				</div>
 				<div className='num-container'>
-					<input className='input-number' ref='inputNumber' value={exchangePrice} onChange={(e)=>{this._onInputChange(e)}} />
-					<span className='complete-number'>{exchangePrice} {this.currency[currentCountry]}</span>
+					<input className='input-number' ref='inputNumber' value={this._replacePrice(exchangePrice)} onChange={(e)=>{this._onInputChange()}} />
+					<span className='complete-number'>{this._replacePrice(exchangePrice)} {this.currency[currentCountry]}</span>
 				</div>
 			</form>
 		)

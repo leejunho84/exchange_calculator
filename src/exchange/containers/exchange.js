@@ -9,7 +9,7 @@ export default class Exchange extends Component {
 		super();
 
 		this.state = {
-			url:'/js/dummy.js',
+			url:'http://api.fixer.io/',
 			symbols:'KRW,USD,EUR,JPY,CNY,AUD,CAD,NZD',
 			date:'2016-05-11',
 			rates:new Map(),
@@ -23,8 +23,8 @@ export default class Exchange extends Component {
 		return new Promise((resolve, reject) => {
 			$.ajax({
 				method:'GET',
-				url:this.state.url,
-				data:{base:this.state.currentCountry.to, symbols:this.state.symbols},
+				url:`${this.state.url}${this.state.date}`,
+				data:{base:this.state.currentCountry.from, symbols:this.state.symbols},
 				type:'JSON',
 				complete:function(result){
 					if(result.status == 200){
@@ -43,7 +43,9 @@ export default class Exchange extends Component {
 
 	_countryChange(country, type){
 		this.setState(state => {
-			return state.currentCountry[type] = country;
+			state.exchangePrice.to = 0;
+			state.exchangePrice.from = 0;
+			state.currentCountry[type] = country;
 		});
 	}
 
@@ -54,16 +56,11 @@ export default class Exchange extends Component {
 
 		if(type == 'to'){
 			let exchange = ((ratesTo / ratesFrom) * value).toFixed(2);
-			this.setState({exchangePrice:{to:this._replacePrice(value), from:this._replacePrice(exchange)}});	
+			this.setState({exchangePrice:{to:value, from:exchange}});
 		}else if(type == 'from'){
 			let exchange = ((ratesFrom / ratesTo) * value).toFixed(2);
-			this.setState({exchangePrice:{to:this._replacePrice(exchange), from:this._replacePrice(value)}});
+			this.setState({exchangePrice:{to:exchange, from:value}});
 		}
-	}
-
-	_replacePrice(val){
-		let price = val.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
-		return price;
 	}
 
 	componentDidMount(){
