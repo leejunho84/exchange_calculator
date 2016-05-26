@@ -20,7 +20,8 @@ export default class CountryRates extends Component {
 
 	render(){
 		let {rates, unit} = this.props;
-		let templete = unit.map((prop, counter) => {
+		let templete = unit.map((prop, counter) => {			
+			if(prop == 'KRW') return false;
 			return (
 				<tr className="down" key={counter}>
 					<th scope="row"><a>{this.countryName[prop]}<em>{prop}</em></a></th>

@@ -19348,6 +19348,7 @@ var CountryRates = function (_Component) {
 			var unit = _props.unit;
 
 			var templete = unit.map(function (prop, counter) {
+				if (prop == 'KRW') return false;
 				return _react2.default.createElement(
 					'tr',
 					{ className: 'down', key: counter },
@@ -19506,9 +19507,16 @@ var SelectComponent = function (_Component) {
 	}
 
 	_createClass(SelectComponent, [{
+		key: '_replacePrice',
+		value: function _replacePrice(val) {
+			var price = val.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+			return price;
+		}
+	}, {
 		key: '_onInputChange',
-		value: function _onInputChange(e) {
-			this.props.exchange(this.refs.inputNumber.value, this.props.selectType);
+		value: function _onInputChange() {
+			var val = this.refs.inputNumber.value.replace(/,/g, '');
+			this.props.exchange(val, this.props.selectType);
 		}
 	}, {
 		key: '_onSelectChange',
@@ -19562,13 +19570,13 @@ var SelectComponent = function (_Component) {
 				_react2.default.createElement(
 					'div',
 					{ className: 'num-container' },
-					_react2.default.createElement('input', { className: 'input-number', ref: 'inputNumber', value: exchangePrice, onChange: function onChange(e) {
-							_this2._onInputChange(e);
+					_react2.default.createElement('input', { className: 'input-number', ref: 'inputNumber', value: this._replacePrice(exchangePrice), onChange: function onChange(e) {
+							_this2._onInputChange();
 						} }),
 					_react2.default.createElement(
 						'span',
 						{ className: 'complete-number' },
-						exchangePrice,
+						this._replacePrice(exchangePrice),
 						' ',
 						this.currency[currentCountry]
 					)
@@ -19619,10 +19627,14 @@ var Exchange = function (_Component) {
 
 		var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Exchange).call(this));
 
+		var DATE = new Date();
+		var year = DATE.getFullYear();
+		var month = DATE.getMonth() + 1;
+		var day = DATE.getDate();
+
 		_this.state = {
-			url: 'https://api.fixer.io/',
-			symbols: 'KRW,USD,EUR,JPY,CNY,AUD,CAD,NZD,CZK',
-			date: _this._date(),
+			url: './js/dummy.js',
+			symbols: 'KRW,USD,EUR,JPY,CNY,AUD,CAD,NZD',
 			rates: new Map(),
 			unit: ['none'],
 			currentCountry: { to: 'USD', from: 'KRW' },
@@ -19632,16 +19644,6 @@ var Exchange = function (_Component) {
 	}
 
 	_createClass(Exchange, [{
-		key: '_date',
-		value: function _date() {
-			var date = new Date();
-			var yyyy = date.getFullYear().toString();
-			var mm = (date.getMonth() + 1).toString();
-			var dd = date.getDate().toString();
-
-			return yyyy + '-' + (mm[1] ? mm : "0" + mm[0]) + '-' + (dd[1] ? dd : "0" + dd[0]);
-		}
-	}, {
 		key: '_promise',
 		value: function _promise() {
 			var _this2 = this;
@@ -19649,15 +19651,18 @@ var Exchange = function (_Component) {
 			return new Promise(function (resolve, reject) {
 				$.ajax({
 					method: 'GET',
-					url: '' + _this2.state.url + _this2.state.date,
+					url: _this2.state.url,
 					data: { base: _this2.state.currentCountry.from, symbols: _this2.state.symbols },
-					dataType: 'jsonp',
-					jsonpCallback: 'callback',
+					type: 'JSON',
 					complete: function complete(result) {
 						if (result.status == 200) {
-							resolve(result.responseJSON);
-						} else if (result.status == 403 || result.status == 404 || result.status == 500) {
-							reject(result.status + result.statusText);
+							resolve(JSON.parse(result.responseText));
+						} else if (result.status == 403) {
+							reject(result.responseText);
+						} else if (result.status == 404) {
+							reject(result.responseText);
+						} else if (result.status == 500) {
+							reject(result.responseText);
 						}
 					}
 				});
@@ -19667,7 +19672,9 @@ var Exchange = function (_Component) {
 		key: '_countryChange',
 		value: function _countryChange(country, type) {
 			this.setState(function (state) {
-				return state.currentCountry[type] = country;
+				state.exchangePrice.to = 0;
+				state.exchangePrice.from = 0;
+				state.currentCountry[type] = country;
 			});
 		}
 	}, {
@@ -19679,17 +19686,11 @@ var Exchange = function (_Component) {
 
 			if (type == 'to') {
 				var exchange = (ratesTo / ratesFrom * value).toFixed(2);
-				this.setState({ exchangePrice: { to: this._replacePrice(value), from: this._replacePrice(exchange) } });
+				this.setState({ exchangePrice: { to: value, from: exchange } });
 			} else if (type == 'from') {
 				var _exchange2 = (ratesFrom / ratesTo * value).toFixed(2);
-				this.setState({ exchangePrice: { to: this._replacePrice(_exchange2), from: this._replacePrice(value) } });
+				this.setState({ exchangePrice: { to: _exchange2, from: value } });
 			}
-		}
-	}, {
-		key: '_replacePrice',
-		value: function _replacePrice(val) {
-			var price = val.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
-			return price;
 		}
 	}, {
 		key: 'componentDidMount',

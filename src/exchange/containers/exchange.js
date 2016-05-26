@@ -8,10 +8,14 @@ export default class Exchange extends Component {
 	constructor(){
 		super();
 
+		const DATE = new Date();
+		let year = DATE.getFullYear();
+		let month = DATE.getMonth() + 1;
+		let day = DATE.getDate();
+
 		this.state = {
-			url:'https://api.fixer.io/',
-			symbols:'KRW,USD,EUR,JPY,CNY,AUD,CAD,NZD,CZK',
-			date:this._date(),
+			url:'./js/dummy.js',
+			symbols:'KRW,USD,EUR,JPY,CNY,AUD,CAD,NZD',
 			rates:new Map(),
 			unit:['none'],
 			currentCountry:{to:'USD', from:'KRW'},
@@ -19,28 +23,22 @@ export default class Exchange extends Component {
 		}
 	}
 
-	_date(){
-		var date = new Date();
-		var yyyy = date.getFullYear().toString();
-		var mm = (date.getMonth()+1).toString();
-		var dd = date.getDate().toString();
-
-		return yyyy+'-'+(mm[1]?mm:"0"+mm[0])+'-'+(dd[1]?dd:"0"+dd[0]);
-	}
-
 	_promise(){
 		return new Promise((resolve, reject) => {
 			$.ajax({
 				method:'GET',
-				url:`${this.state.url}${this.state.date}`,
+				url:this.state.url,
 				data:{base:this.state.currentCountry.from, symbols:this.state.symbols},
-				dataType:'jsonp',
-				jsonpCallback:'callback',
+				type:'JSON',
 				complete:function(result){
 					if(result.status == 200){
-						resolve(result.responseJSON);
-					}else if(result.status == 403 || result.status == 404 || result.status == 500 ){
-						reject(result.status + result.statusText);
+						resolve(JSON.parse(result.responseText));
+					}else if(result.status == 403){
+						reject(result.responseText);
+					}else if(result.status == 404){
+						reject(result.responseText);
+					}else if(result.status == 500){
+						reject(result.responseText);
 					}
 				}
 			});
@@ -49,7 +47,9 @@ export default class Exchange extends Component {
 
 	_countryChange(country, type){
 		this.setState(state => {
-			return state.currentCountry[type] = country;
+			state.exchangePrice.to = 0;
+			state.exchangePrice.from = 0;
+			state.currentCountry[type] = country;
 		});
 	}
 
@@ -60,16 +60,11 @@ export default class Exchange extends Component {
 
 		if(type == 'to'){
 			let exchange = ((ratesTo / ratesFrom) * value).toFixed(2);
-			this.setState({exchangePrice:{to:this._replacePrice(value), from:this._replacePrice(exchange)}});	
+			this.setState({exchangePrice:{to:value, from:exchange}});
 		}else if(type == 'from'){
 			let exchange = ((ratesFrom / ratesTo) * value).toFixed(2);
-			this.setState({exchangePrice:{to:this._replacePrice(exchange), from:this._replacePrice(value)}});
+			this.setState({exchangePrice:{to:exchange, from:value}});
 		}
-	}
-
-	_replacePrice(val){
-		let price = val.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
-		return price;
 	}
 
 	componentDidMount(){
