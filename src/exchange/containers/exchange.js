@@ -8,10 +8,14 @@ export default class Exchange extends Component {
 	constructor(){
 		super();
 
+		const DATE = new Date();
+		let year = DATE.getFullYear();
+		let month = DATE.getMonth() + 1;
+		let day = DATE.getDate();
+
 		this.state = {
-			url:'http://api.fixer.io/',
+			url:'http://api.fixer.io/latest',
 			symbols:'KRW,USD,EUR,JPY,CNY,AUD,CAD,NZD',
-			date:'2016-05-11',
 			rates:new Map(),
 			unit:['none'],
 			currentCountry:{to:'USD', from:'KRW'},
@@ -23,22 +27,27 @@ export default class Exchange extends Component {
 		return new Promise((resolve, reject) => {
 			$.ajax({
 				method:'GET',
-				url:`${this.state.url}${this.state.date}`,
+				url:this.state.url,
 				data:{base:this.state.currentCountry.from, symbols:this.state.symbols},
+				dataType:'JSONP',
 				type:'JSON',
 				complete:function(result){
 					if(result.status == 200){
-						resolve( JSON.parse(result.responseText));
+						resolve(result.responseJSON);
 					}else if(result.status == 403){
-						reject(result.responseText);
+						reject(result.responseJSON);
 					}else if(result.status == 404){
-						reject(result.responseText);
+						reject(result.responseJSON);
 					}else if(result.status == 500){
-						reject(result.responseText);
+						reject(result.responseJSON);
 					}
 				}
 			});
 		});
+	}
+
+	_callbackaa(data){
+		console.log(data);
 	}
 
 	_countryChange(country, type){
